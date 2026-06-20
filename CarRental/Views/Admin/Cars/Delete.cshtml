@@ -1,0 +1,79 @@
+@model CarRental.Models.Domain.Car
+@{
+    ViewData["Title"] = $"Delete {Model.Brand.Name} {Model.Model}";
+}
+
+@await Html.PartialAsync("_Navbar")
+
+<section class="auth-page">
+    <div class="auth-bg-grid"></div>
+    <div class="auth-glow auth-glow-1"></div>
+    <div class="auth-glow auth-glow-2"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <div class="auth-logo">
+                    <div class="nav-logo-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </div>
+                </div>
+                <h1 class="auth-title">Delete Car</h1>
+                <p class="auth-subtitle">Are you sure you want to remove this vehicle?</p>
+            </div>
+
+            <div class="customer-delete-info">
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">Vehicle</span>
+                    <span class="customer-delete-value">@Model.Brand.Name @Model.Model</span>
+                </div>
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">Year</span>
+                    <span class="customer-delete-value">@Model.Year</span>
+                </div>
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">License Plate</span>
+                    <span class="customer-delete-value">@Model.LicensePlate</span>
+                </div>
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">Price/Day</span>
+                    <span class="customer-delete-value">&euro;@Model.DailyPrice</span>
+                </div>
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">Location</span>
+                    <span class="customer-delete-value">@Model.Location.City — @Model.Location.Address</span>
+                </div>
+                <div class="customer-delete-row">
+                    <span class="customer-delete-label">Status</span>
+                    <span class="customer-delete-value">
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="table-status status-completed">Available</span>
+                        }
+                        else
+                        {
+                            <span class="table-status status-cancelled">Rented</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="margin-top: 1.5rem;">
+                <button type="submit" class="auth-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    Yes, Delete Car
+                </button>
+            </form>
+
+            <div class="auth-divider"><span></span></div>
+
+            <div class="auth-footer">
+                <p><a asp-action="Index" class="auth-link">Cancel, go back</a></p>
+            </div>
+        </div>
+    </div>
+</section>

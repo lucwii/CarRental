@@ -46,8 +46,17 @@ public class CustomersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Customer customer)
     {
+        ModelState.Remove("Rentals");
+        ModelState.Remove("UserId");
+        ModelState.Remove("PhoneNumber");
+        ModelState.Remove("DrivingLicenseNumber");
+
         if (!ModelState.IsValid)
             return View(customer);
+
+        customer.UserId ??= string.Empty;
+        customer.PhoneNumber ??= string.Empty;
+        customer.DrivingLicenseNumber ??= string.Empty;
 
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
@@ -67,6 +76,8 @@ public class CustomersController : Controller
     public async Task<IActionResult> Edit(int id, Customer customer)
     {
         if (id != customer.Id) return NotFound();
+
+        ModelState.Remove("Rentals");
 
         if (!ModelState.IsValid)
             return View(customer);

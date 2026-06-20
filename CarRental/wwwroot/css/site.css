@@ -2630,6 +2630,19 @@ body {
     margin-top: 0.15rem;
 }
 
+/* ==================== ADMIN FORMS ==================== */
+.admin-form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 480px) {
+    .admin-form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {
     .hero-container {

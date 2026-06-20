@@ -24,6 +24,8 @@
             <li><a asp-controller="Brands" asp-action="Index" class="@(controller == "Brands" ? "nav-active" : "")">Brands</a></li>
             @if (User.IsInRole("Admin"))
             {
+                <li><a href="/Admin/Cars" class="@(ViewContext.HttpContext.Request.Path.StartsWithSegments("/Admin/Cars") ? "nav-active" : "")">Manage Cars</a></li>
+                <li><a href="/Admin/Brands" class="@(ViewContext.HttpContext.Request.Path.StartsWithSegments("/Admin/Brands") ? "nav-active" : "")">Manage Brands</a></li>
                 <li><a asp-controller="Customers" asp-action="Index" class="@(controller == "Customers" ? "nav-active" : "")">Customers</a></li>
             }
             @if (SignInManager.IsSignedIn(User))
