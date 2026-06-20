@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { threshold: 0.15 });
 
-    document.querySelectorAll('.reveal, .car-card, .step-card, .location-card').forEach(function (el, i) {
+    document.querySelectorAll('.reveal, .car-card, .step-card, .location-card, .brand-card').forEach(function (el, i) {
         el.dataset.delay = i * 100;
         observer.observe(el);
     });

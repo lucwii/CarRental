@@ -1,0 +1,25 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var isHome = controller == "Home" && (ViewContext.RouteData.Values["action"]?.ToString() ?? "") == "Index";
+    var navClass = isHome ? "landing-nav" : "landing-nav scrolled";
+}
+
+<nav class="@navClass" id="mainNav">
+    <div class="nav-container">
+        <a class="nav-logo" asp-controller="Home" asp-action="Index">
+            <div class="nav-logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 17h14M5 17a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h8l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2M9 17a2 2 0 100-4 2 2 0 000 4zM15 17a2 2 0 100-4 2 2 0 000 4z"/>
+                </svg>
+            </div>
+            CarRental
+        </a>
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index" class="@(controller == "Home" ? "nav-active" : "")">Home</a></li>
+            <li><a asp-controller="Cars" asp-action="Index" class="@(controller == "Cars" ? "nav-active" : "")">Cars</a></li>
+            <li><a asp-controller="Brands" asp-action="Index" class="@(controller == "Brands" ? "nav-active" : "")">Brands</a></li>
+            <li><a href="#" class="nav-link-login">Login</a></li>
+            <li><a href="#" class="nav-cta">Get Started</a></li>
+        </ul>
+    </div>
+</nav>

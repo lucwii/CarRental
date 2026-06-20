@@ -1,0 +1,268 @@
+@model CarRental.Models.Domain.Car
+@{
+    ViewData["Title"] = $"{Model.Brand.Name} {Model.Model}";
+    var activeRentals = Model.Rentals.Count(r => r.Status == "Active" || r.Status == "Pending");
+    var completedRentals = Model.Rentals.Count(r => r.Status == "Completed");
+}
+
+@await Html.PartialAsync("_Navbar")
+
+<!-- DETAILS HERO -->
+<section class="details-hero">
+    <div class="cars-header-bg-grid"></div>
+    <div class="cars-header-glow"></div>
+    <div class="section-container" style="position: relative; z-index: 2;">
+        <!-- Breadcrumb -->
+        <div class="details-breadcrumb reveal">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <a asp-controller="Cars" asp-action="Index">Vehicles</a>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span>@Model.Brand.Name @Model.Model</span>
+        </div>
+
+        <div class="details-grid">
+            <!-- Left: Car Image -->
+            <div class="details-image-section reveal">
+                <div class="details-image-card">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Brand.Name @Model.Model" class="details-car-img"/>
+                    }
+                    else
+                    {
+                        <svg class="details-car-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="detailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#6366f1"/>
+                                    <stop offset="100%" style="stop-color:#a78bfa"/>
+                                </linearGradient>
+                            </defs>
+                            <g>
+                                <path d="M60,130 Q60,100 90,100 L150,100 L180,60 Q185,55 195,55 L310,55 Q320,55 325,60 L370,100 L420,100 Q450,100 450,130 L450,140 Q450,150 440,150 L70,150 Q60,150 60,140 Z" fill="url(#detailGrad)"/>
+                                <path d="M188,65 L170,95 L240,95 L240,65 Q240,62 237,62 L191,62 Q189,62 188,65 Z" fill="#c7d2fe" opacity="0.8"/>
+                                <path d="M248,62 L248,95 L350,95 L320,65 Q318,62 315,62 Z" fill="#c7d2fe" opacity="0.8"/>
+                                <rect x="430" y="108" width="18" height="12" rx="4" fill="#fbbf24" opacity="0.9"/>
+                                <rect x="62" y="108" width="18" height="12" rx="4" fill="#ef4444" opacity="0.7"/>
+                                <circle cx="145" cy="150" r="28" fill="#1e293b"/>
+                                <circle cx="145" cy="150" r="18" fill="#334155"/>
+                                <circle cx="145" cy="150" r="10" fill="#475569"/>
+                                <circle cx="375" cy="150" r="28" fill="#1e293b"/>
+                                <circle cx="375" cy="150" r="18" fill="#334155"/>
+                                <circle cx="375" cy="150" r="10" fill="#475569"/>
+                            </g>
+                            <ellipse cx="260" cy="182" rx="180" ry="6" fill="url(#detailGrad)" opacity="0.08"/>
+                        </svg>
+                    }
+
+                    <!-- Status overlay -->
+                    <div class="details-status @(Model.IsAvailable ? "status-available" : "status-rented")">
+                        <span class="details-status-dot"></span>
+                        @(Model.IsAvailable ? "Available Now" : "Currently Rented")
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Car Info -->
+            <div class="details-info-section reveal">
+                <div class="details-brand-badge">
+                    <div class="brand-logo-circle" style="width:36px; height:36px; font-size:0.85rem;">@Model.Brand.Name[0]</div>
+                    <span>@Model.Brand.Name</span>
+                </div>
+
+                <h1 class="details-title">@Model.Brand.Name @Model.Model</h1>
+
+                <div class="details-price-tag">
+                    <span class="details-price-value">&euro;@Model.DailyPrice</span>
+                    <span class="details-price-period">/ day</span>
+                </div>
+
+                <!-- Specs Grid -->
+                <div class="details-specs-grid">
+                    <div class="details-spec">
+                        <div class="details-spec-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="details-spec-label">Year</div>
+                            <div class="details-spec-value">@Model.Year</div>
+                        </div>
+                    </div>
+                    <div class="details-spec">
+                        <div class="details-spec-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="details-spec-label">Fuel Type</div>
+                            <div class="details-spec-value">@Model.FuelType</div>
+                        </div>
+                    </div>
+                    <div class="details-spec">
+                        <div class="details-spec-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="details-spec-label">Seats</div>
+                            <div class="details-spec-value">@Model.Seats</div>
+                        </div>
+                    </div>
+                    <div class="details-spec">
+                        <div class="details-spec-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><path d="M16 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><line x1="6" y1="15" x2="6" y2="19"/><line x1="10" y1="15" x2="10" y2="19"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="details-spec-label">License Plate</div>
+                            <div class="details-spec-value">@Model.LicensePlate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="details-location">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <div>
+                        <div class="details-location-city">@Model.Location.City</div>
+                        <div class="details-location-address">@Model.Location.Address</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="details-actions">
+                    @if (Model.IsAvailable)
+                    {
+                        <button class="btn-hero-primary" style="width: 100%; justify-content: center;">
+                            Rent This Car
+                            <span class="btn-arrow">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn-hero-primary btn-disabled" disabled style="width: 100%; justify-content: center; opacity: 0.5; cursor: not-allowed;">
+                            Currently Unavailable
+                        </button>
+                    }
+                    <a asp-controller="Cars" asp-action="Index" class="btn-hero-secondary" style="width: 100%; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to Fleet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RENTAL STATS -->
+<section class="section section-light">
+    <div class="section-container">
+        <div class="details-stats-row reveal">
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(34, 197, 94, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@completedRentals</div>
+                    <div class="details-stat-label">Completed Rentals</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(99, 102, 241, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@activeRentals</div>
+                    <div class="details-stat-label">Active Bookings</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(245, 158, 11, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@Model.Rentals.Count</div>
+                    <div class="details-stat-label">Total Bookings</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(236, 72, 153, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">&euro;@Model.DailyPrice</div>
+                    <div class="details-stat-label">Daily Rate</div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Rentals.Any())
+        {
+            <div class="details-rentals-section reveal">
+                <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1.5rem;">Rental History</h2>
+                <div class="details-table-wrapper">
+                    <table class="details-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rental in Model.Rentals.OrderByDescending(r => r.StartDate))
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="table-customer">
+                                            <div class="table-customer-avatar">@rental.Customer.FullName[0]</div>
+                                            @rental.Customer.FullName
+                                        </div>
+                                    </td>
+                                    <td>@rental.StartDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@rental.EndDate.ToString("MMM dd, yyyy")</td>
+                                    <td><strong>&euro;@rental.TotalPrice</strong></td>
+                                    <td>
+                                        <span class="table-status status-@rental.Status.ToLower()">@rental.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="landing-footer">
+    <div class="section-container">
+        <div class="footer-bottom" style="border: none; padding-top: 0;">
+            <span class="footer-copy">&copy; 2026 CarRental. All rights reserved.</span>
+        </div>
+    </div>
+</footer>

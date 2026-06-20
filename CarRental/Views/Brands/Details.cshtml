@@ -1,0 +1,177 @@
+@model CarRental.Models.Domain.Brand
+@{
+    ViewData["Title"] = Model.Name;
+    var availableCars = Model.Cars.Count(c => c.IsAvailable);
+    var totalCars = Model.Cars.Count;
+}
+
+@await Html.PartialAsync("_Navbar")
+
+<!-- DETAILS HERO -->
+<section class="details-hero">
+    <div class="cars-header-bg-grid"></div>
+    <div class="cars-header-glow"></div>
+    <div class="section-container" style="position: relative; z-index: 2;">
+        <!-- Breadcrumb -->
+        <div class="details-breadcrumb reveal">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <a asp-controller="Brands" asp-action="Index">Brands</a>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span>@Model.Name</span>
+        </div>
+
+        <div class="brand-details-header">
+            <div class="brand-details-left reveal">
+                <div class="brand-details-logo-wrapper">
+                    @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" alt="@Model.Name" class="brand-details-logo-img"/>
+                    }
+                    else
+                    {
+                        <span class="brand-details-logo-letter">@Model.Name[0]</span>
+                    }
+                </div>
+                <div>
+                    <h1 class="details-title" style="margin-bottom: 0.5rem;">@Model.Name</h1>
+                    <div class="brand-details-country">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                        </svg>
+                        @Model.Country
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-details-stats reveal">
+                <div class="brand-detail-stat">
+                    <div class="brand-detail-stat-value">@totalCars</div>
+                    <div class="brand-detail-stat-label">Total Cars</div>
+                </div>
+                <div class="brand-detail-stat">
+                    <div class="brand-detail-stat-value">@availableCars</div>
+                    <div class="brand-detail-stat-label">Available</div>
+                </div>
+                <div class="brand-detail-stat">
+                    @if (Model.Cars.Any())
+                    {
+                        <div class="brand-detail-stat-value">&euro;@Model.Cars.Min(c => c.DailyPrice)</div>
+                    }
+                    else
+                    {
+                        <div class="brand-detail-stat-value">-</div>
+                    }
+                    <div class="brand-detail-stat-label">From / Day</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CARS FROM THIS BRAND -->
+<section class="section section-light">
+    <div class="section-container">
+        <div class="section-header" style="margin-bottom: 3rem;">
+            <div class="section-label">Fleet</div>
+            <h2 class="section-title">@Model.Name Vehicles</h2>
+            <p class="section-subtitle">Explore all @Model.Name models in our fleet.</p>
+        </div>
+
+        @if (Model.Cars.Any())
+        {
+            <div class="cars-grid">
+                @foreach (var car in Model.Cars)
+                {
+                    <div class="car-card">
+                        <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="car-card-link">
+                            <div class="car-card-image">
+                                @if (car.IsAvailable)
+                                {
+                                    <span class="car-card-badge badge-available">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="car-card-badge badge-unavailable">Rented</span>
+                                }
+                                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                                {
+                                    <img src="@car.ImageUrl" alt="@Model.Name @car.Model" class="car-card-img"/>
+                                }
+                                else
+                                {
+                                    <div class="car-card-placeholder">
+                                        <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+                                            <defs><linearGradient id="bg-@car.Id" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#8b5cf6"/></linearGradient></defs>
+                                            <path d="M35,88 Q35,68 50,68 L98,68 L118,40 Q121,35 128,35 L198,35 Q205,35 208,40 L238,68 L270,68 Q290,68 290,88 L290,93 Q290,100 282,100 L48,100 Q35,100 35,93 Z" fill="url(#bg-@car.Id)"/>
+                                            <path d="M123,40 L110,64 L160,64 L160,40 Q160,38 158,38 L125,38 Q124,38 123,40 Z" fill="#c7d2fe" opacity="0.8"/>
+                                            <path d="M165,38 L165,64 L225,64 L205,42 Q204,38 201,38 Z" fill="#c7d2fe" opacity="0.8"/>
+                                            <circle cx="95" cy="100" r="18" fill="#1e1b4b"/><circle cx="95" cy="100" r="11" fill="#312e81"/><circle cx="95" cy="100" r="5" fill="#4338ca"/>
+                                            <circle cx="238" cy="100" r="18" fill="#1e1b4b"/><circle cx="238" cy="100" r="11" fill="#312e81"/><circle cx="238" cy="100" r="5" fill="#4338ca"/>
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+                            <div class="car-card-body">
+                                <div class="car-card-brand">@Model.Name</div>
+                                <div class="car-card-name">@Model.Name @car.Model</div>
+                                <div class="car-card-specs">
+                                    <span class="car-spec">
+                                        <span class="car-spec-icon">&#9971;</span> @car.FuelType
+                                    </span>
+                                    <span class="car-spec">
+                                        <span class="car-spec-icon">&#128101;</span> @car.Seats Seats
+                                    </span>
+                                    <span class="car-spec">
+                                        <span class="car-spec-icon">&#128197;</span> @car.Year
+                                    </span>
+                                    <span class="car-spec">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        @car.Location.City
+                                    </span>
+                                </div>
+                                <div class="car-card-footer">
+                                    <div class="car-price">
+                                        <span class="car-price-value">&euro;@car.DailyPrice</span>
+                                        <span class="car-price-period">/day</span>
+                                    </div>
+                                    <span class="btn-rent">View Details</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="cars-empty">
+                <div class="cars-empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 17h14M5 17a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h8l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2M9 17a2 2 0 100-4 2 2 0 000 4zM15 17a2 2 0 100-4 2 2 0 000 4z"/>
+                    </svg>
+                </div>
+                <h3 class="cars-empty-title">No vehicles yet</h3>
+                <p class="cars-empty-text">This brand doesn't have any vehicles in our fleet at the moment.</p>
+            </div>
+        }
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a asp-controller="Brands" asp-action="Index" class="btn-hero-secondary" style="border-color: #e2e8f0; color: var(--dark);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                All Brands
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="landing-footer">
+    <div class="section-container">
+        <div class="footer-bottom" style="border: none; padding-top: 0;">
+            <span class="footer-copy">&copy; 2026 CarRental. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
