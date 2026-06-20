@@ -1,3 +1,7 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var isHome = controller == "Home" && (ViewContext.RouteData.Values["action"]?.ToString() ?? "") == "Index";
@@ -18,8 +22,20 @@
             <li><a asp-controller="Home" asp-action="Index" class="@(controller == "Home" ? "nav-active" : "")">Home</a></li>
             <li><a asp-controller="Cars" asp-action="Index" class="@(controller == "Cars" ? "nav-active" : "")">Cars</a></li>
             <li><a asp-controller="Brands" asp-action="Index" class="@(controller == "Brands" ? "nav-active" : "")">Brands</a></li>
-            <li><a href="#" class="nav-link-login">Login</a></li>
-            <li><a href="#" class="nav-cta">Get Started</a></li>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <li><a href="#" class="nav-link-login">Hello, @UserManager.GetUserName(User)</a></li>
+                <li>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                        <button type="submit" class="nav-cta" style="border:none;cursor:pointer;">Logout</button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li><a asp-controller="Account" asp-action="Login" class="nav-link-login">Login</a></li>
+                <li><a asp-controller="Account" asp-action="Register" class="nav-cta">Get Started</a></li>
+            }
         </ul>
     </div>
 </nav>
