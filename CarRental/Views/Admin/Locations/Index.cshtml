@@ -1,7 +1,7 @@
-@model IEnumerable<CarRental.Models.Domain.Car>
+@model IEnumerable<CarRental.Models.Domain.Location>
 @{
-    ViewData["Title"] = "Manage Cars";
-    var availableCount = Model.Count(c => c.IsAvailable);
+    ViewData["Title"] = "Manage Locations";
+    var totalCars = Model.Sum(l => l.Cars.Count);
 }
 
 @await Html.PartialAsync("_AdminLayout")
@@ -13,21 +13,21 @@
     <div class="section-container" style="position: relative; z-index: 2;">
         <div class="cars-header-content reveal">
             <div class="section-label" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.25); color: #818cf8;">Admin Panel</div>
-            <h1 class="section-title" style="color: var(--white); font-size: 3.5rem;">Manage Cars</h1>
-            <p class="section-subtitle" style="color: var(--gray-light);">@Model.Count() vehicles in fleet, @availableCount available.</p>
+            <h1 class="section-title" style="color: var(--white); font-size: 3.5rem;">Manage Locations</h1>
+            <p class="section-subtitle" style="color: var(--gray-light);">@Model.Count() locations, @totalCars vehicles across all.</p>
         </div>
         <div style="display: flex; justify-content: center; margin-top: 2rem;">
-            <a asp-action="Create" class="btn-hero-primary">
+            <a href="/Admin/Locations/Create" class="btn-hero-primary">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Add Car
+                Add Location
             </a>
         </div>
     </div>
 </section>
 
-<!-- CARS TABLE -->
+<!-- LOCATIONS TABLE -->
 <section class="section section-light" style="padding-top: 4rem;">
     <div class="section-container">
         @if (Model.Any())
@@ -36,53 +36,36 @@
                 <table class="details-table">
                     <thead>
                         <tr>
-                            <th>Vehicle</th>
-                            <th>Year</th>
-                            <th>Plate</th>
-                            <th>Fuel</th>
-                            <th>Seats</th>
-                            <th>Price/Day</th>
-                            <th>Location</th>
-                            <th>Status</th>
+                            <th>City</th>
+                            <th>Address</th>
+                            <th>Cars</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var car in Model)
+                        @foreach (var location in Model)
                         {
                             <tr>
                                 <td>
                                     <div class="table-customer">
-                                        <div class="table-customer-avatar">@car.Brand.Name[0]</div>
-                                        <div>
-                                            <div style="font-weight: 700;">@car.Brand.Name @car.Model</div>
+                                        <div class="table-customer-avatar" style="background: rgba(99,102,241,0.1); color: #6366f1;">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                                            </svg>
                                         </div>
+                                        <strong>@location.City</strong>
                                     </div>
                                 </td>
-                                <td>@car.Year</td>
-                                <td><code style="background: var(--light); padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.8rem;">@car.LicensePlate</code></td>
-                                <td>@car.FuelType</td>
-                                <td>@car.Seats</td>
-                                <td><strong>&euro;@car.DailyPrice</strong></td>
-                                <td>@car.Location.City</td>
-                                <td>
-                                    @if (car.IsAvailable)
-                                    {
-                                        <span class="table-status status-completed">Available</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="table-status status-cancelled">Rented</span>
-                                    }
-                                </td>
+                                <td>@location.Address</td>
+                                <td><strong>@location.Cars.Count</strong></td>
                                 <td>
                                     <div class="rental-card-actions">
-                                        <a asp-action="Edit" asp-route-id="@car.Id" class="rental-action-btn rental-action-edit" title="Edit">
+                                        <a href="/Admin/Locations/Edit/@location.Id" class="rental-action-btn rental-action-edit" title="Edit">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                             </svg>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@car.Id" class="rental-action-btn rental-action-delete" title="Delete">
+                                        <a href="/Admin/Locations/Delete/@location.Id" class="rental-action-btn rental-action-delete" title="Delete">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                                             </svg>
@@ -100,11 +83,11 @@
             <div class="cars-empty">
                 <div class="cars-empty-icon">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 17h14M5 17a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h8l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2M9 17a2 2 0 100-4 2 2 0 000 4zM15 17a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
                     </svg>
                 </div>
-                <h3 class="cars-empty-title">No cars in fleet</h3>
-                <p class="cars-empty-text">Add your first car to get started.</p>
+                <h3 class="cars-empty-title">No locations yet</h3>
+                <p class="cars-empty-text">Add your first location to get started.</p>
             </div>
         }
     </div>

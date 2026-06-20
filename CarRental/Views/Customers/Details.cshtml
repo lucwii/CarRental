@@ -6,7 +6,7 @@
     var totalSpent = Model.Rentals.Where(r => r.Status == "Completed").Sum(r => r.TotalPrice);
 }
 
-@await Html.PartialAsync("_Navbar")
+@await Html.PartialAsync("_AdminLayout")
 
 <!-- DETAILS HERO -->
 <section class="details-hero">
