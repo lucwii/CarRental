@@ -22,8 +22,13 @@
             <li><a asp-controller="Home" asp-action="Index" class="@(controller == "Home" ? "nav-active" : "")">Home</a></li>
             <li><a asp-controller="Cars" asp-action="Index" class="@(controller == "Cars" ? "nav-active" : "")">Cars</a></li>
             <li><a asp-controller="Brands" asp-action="Index" class="@(controller == "Brands" ? "nav-active" : "")">Brands</a></li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li><a asp-controller="Customers" asp-action="Index" class="@(controller == "Customers" ? "nav-active" : "")">Customers</a></li>
+            }
             @if (SignInManager.IsSignedIn(User))
             {
+                <li><a asp-controller="Rentals" asp-action="Index" class="@(controller == "Rentals" ? "nav-active" : "")">My Rentals</a></li>
                 <li><a href="#" class="nav-link-login">Hello, @UserManager.GetUserName(User)</a></li>
                 <li>
                     <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">

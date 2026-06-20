@@ -1,0 +1,155 @@
+@model IEnumerable<CarRental.Models.Domain.Rental>
+@{
+    ViewData["Title"] = "My Rentals";
+    var totalSpent = Model.Where(r => r.Status == "Completed").Sum(r => r.TotalPrice);
+    var activeCount = Model.Count(r => r.Status == "Active" || r.Status == "Pending");
+}
+
+@await Html.PartialAsync("_Navbar")
+
+<!-- PAGE HEADER -->
+<section class="cars-page-header">
+    <div class="cars-header-bg-grid"></div>
+    <div class="cars-header-glow"></div>
+    <div class="section-container" style="position: relative; z-index: 2;">
+        <div class="cars-header-content reveal">
+            <div class="section-label" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.25); color: #818cf8;">My Account</div>
+            <h1 class="section-title" style="color: var(--white); font-size: 3.5rem;">My Rentals</h1>
+            <p class="section-subtitle" style="color: var(--gray-light);">You have @Model.Count() rental@(Model.Count() != 1 ? "s" : "") total, @activeCount active.</p>
+        </div>
+        <div style="display: flex; justify-content: center; margin-top: 2rem;">
+            <a asp-action="Create" class="btn-hero-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Rent a Car
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="section section-light" style="padding-top: 0; margin-top: -60px; position: relative; z-index: 3;">
+    <div class="section-container">
+        <div class="details-stats-row reveal">
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(99, 102, 241, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@activeCount</div>
+                    <div class="details-stat-label">Active</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(34, 197, 94, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@Model.Count(r => r.Status == "Completed")</div>
+                    <div class="details-stat-label">Completed</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(245, 158, 11, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">@Model.Count()</div>
+                    <div class="details-stat-label">Total</div>
+                </div>
+            </div>
+            <div class="details-stat-card">
+                <div class="details-stat-icon" style="background: rgba(236, 72, 153, 0.1);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                    </svg>
+                </div>
+                <div class="details-stat-info">
+                    <div class="details-stat-number">&euro;@totalSpent</div>
+                    <div class="details-stat-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RENTALS LIST -->
+<section class="section section-light" style="padding-top: 0;">
+    <div class="section-container">
+        @if (Model.Any())
+        {
+            <div class="rentals-list">
+                @foreach (var rental in Model)
+                {
+                    <div class="rental-card">
+                        <div class="rental-card-left">
+                            <div class="rental-card-avatar">
+                                <span>@rental.Car.Brand.Name[0]</span>
+                            </div>
+                            <div class="rental-card-info">
+                                <div class="rental-card-car">@rental.Car.Brand.Name @rental.Car.Model</div>
+                                <div class="rental-card-dates">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                    @rental.StartDate.ToString("MMM dd, yyyy") — @rental.EndDate.ToString("MMM dd, yyyy")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rental-card-middle">
+                            <div class="rental-card-price">&euro;@rental.TotalPrice</div>
+                            <div class="rental-card-days">@((rental.EndDate - rental.StartDate).Days) days</div>
+                        </div>
+                        <div class="rental-card-status">
+                            <span class="table-status status-@rental.Status.ToLower()">@rental.Status</span>
+                        </div>
+                        <div class="rental-card-actions">
+                            @if (rental.Status == "Pending")
+                            {
+                                <a asp-action="Edit" asp-route-id="@rental.Id" class="rental-action-btn rental-action-edit" title="Edit">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </a>
+                            }
+                            <a asp-action="Delete" asp-route-id="@rental.Id" class="rental-action-btn rental-action-delete" title="Cancel">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="cars-empty">
+                <div class="cars-empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 17h14M5 17a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h8l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2M9 17a2 2 0 100-4 2 2 0 000 4zM15 17a2 2 0 100-4 2 2 0 000 4z"/>
+                    </svg>
+                </div>
+                <h3 class="cars-empty-title">No rentals yet</h3>
+                <p class="cars-empty-text">Browse our fleet and rent your first car!</p>
+                <a asp-action="Create" class="btn-hero-primary" style="margin-top: 1.5rem; display: inline-flex;">Rent a Car</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="landing-footer">
+    <div class="section-container">
+        <div class="footer-bottom" style="border: none; padding-top: 0;">
+            <span class="footer-copy">&copy; 2026 CarRental. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
